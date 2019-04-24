@@ -11,7 +11,7 @@
     var users = require('./routes/users');
     var noble = require('noble');
     var app = express();
-    
+    const db = require('./knexfile.js')
     var address = "c1:6b:be:53:55:3a";
     var command = "\x03\x10clearInterval()\n\x10setInterval(function() {LED3.set()}, 500);\n\x10print('Comando agregado')\n";
     var btDevice;
@@ -67,24 +67,14 @@
         });
     });
 
+    console.log('db', db)
     app.set('port', process.env.PORT || 3000);
 
-    const knex = require('knex')({
-        client: 'mssql',
-        connection: {
-            server : '127.0.0.1',
-            user : 'sa',
-            password : 'Tenco1234',
-            database : 'PuckJS',
-        }
-    });
-
-    
-
+    const knex = require('knex')(db.development);
 
     var server = app.listen(app.get('port'), function () {
         console.log('Express server listening on port ' + server.address().port);
-        knex.select().from('Device').then(res => {
+        knex.select().from('Devices').then(res => {
             console.log(res);
         }).catch(e => {
             console.log(e);
